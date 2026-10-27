@@ -138,6 +138,17 @@ export default function App() {
               🚪
             </button>
           </div>
+          <div className="mt-3 pt-3 border-t border-gray-100 text-center">
+            <p className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+              <span>Built by</span>
+              <span className="inline-flex items-center gap-1 font-semibold text-gray-600">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Verge Dynamics
+              </span>
+            </p>
+          </div>
         </div>
       </aside>
 
@@ -174,15 +185,26 @@ export default function App() {
               <button onClick={() => { setModal('deposit'); setSidebarOpen(false); }} className="w-full py-2.5 bg-green-600 text-white rounded-xl text-sm font-medium">+ New Deposit</button>
               <button onClick={() => { setModal('withdrawal'); setSidebarOpen(false); }} className="w-full py-2.5 bg-orange-500 text-white rounded-xl text-sm font-medium">+ New Withdrawal</button>
             </div>
-            <div className="p-3 border-t border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-xs font-bold">{user.name.charAt(0)}</div>
-                <div>
-                  <p className="text-sm font-medium text-gray-800">{user.name}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+            <div className="p-3 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-xs font-bold">{user.name.charAt(0)}</div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{user.name}</p>
+                    <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                  </div>
                 </div>
+                <button onClick={() => { setShowLogoutModal(true); setSidebarOpen(false); }} className="p-2 text-gray-400 hover:text-red-500">🚪</button>
               </div>
-              <button onClick={() => { setShowLogoutModal(true); setSidebarOpen(false); }} className="p-2 text-gray-400 hover:text-red-500">🚪</button>
+              <p className="text-[10px] text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
+                <span>Built by</span>
+                <span className="inline-flex items-center gap-1 font-semibold text-gray-600">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Verge Dynamics
+                </span>
+              </p>
             </div>
           </aside>
         </div>
@@ -1367,6 +1389,38 @@ function SettingsPage({ showToast }: { showToast: (msg: string, type?: 'success'
           </button>
         </div>
       )}
+
+      {/* About / Credits */}
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center gap-5">
+          <div className="flex-shrink-0">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+              <svg className="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+          </div>
+          <div className="flex-1">
+            <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Proudly Built By</p>
+            <h3 className="text-2xl font-bold mb-1">Verge Dynamics</h3>
+            <p className="text-gray-300 text-sm mb-3">
+              Enterprise software solutions for mobile money & fintech innovation.
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2.5 py-1 bg-white/10 rounded-full">Mobile Money</span>
+              <span className="px-2.5 py-1 bg-white/10 rounded-full">Fintech</span>
+              <span className="px-2.5 py-1 bg-white/10 rounded-full">Agent Banking</span>
+              <span className="px-2.5 py-1 bg-white/10 rounded-full">Enterprise Solutions</span>
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 pt-5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-gray-400">
+          <p>MobiCash Agent Banking System v1.0</p>
+          <p>© {new Date().getFullYear()} Verge Dynamics. All rights reserved.</p>
+        </div>
+      </div>
     </div>
   );
 }

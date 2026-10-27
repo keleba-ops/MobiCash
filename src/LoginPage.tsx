@@ -145,9 +145,20 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-green-100 text-xs mt-6">
-          © {new Date().getFullYear()} MobiCash Agent Banking System
-        </p>
+        <div className="text-center mt-6 space-y-1">
+          <p className="text-green-100 text-xs">
+            © {new Date().getFullYear()} MobiCash Agent Banking System
+          </p>
+          <p className="text-green-100/80 text-[11px] flex items-center justify-center gap-1.5">
+            <span>Built by</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-white">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Verge Dynamics
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
