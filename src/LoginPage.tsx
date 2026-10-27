@@ -124,59 +124,7 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide flex items-center gap-1.5">
-                <span>🔑</span> Demo Credentials
-              </p>
-              <span className="text-[10px] text-blue-500 font-medium">Click to auto-fill</span>
-            </div>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => { setUsername('admin'); setPassword('admin123'); }}
-                className="w-full flex items-center justify-between p-2.5 bg-white hover:bg-blue-50 rounded-lg border border-blue-200 hover:border-blue-300 transition-all group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs">👑</span>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-gray-700">Administrator</p>
-                    <p className="text-[10px] text-gray-500 font-mono">admin / admin123</p>
-                  </div>
-                </div>
-                <span className="text-[10px] text-blue-600 opacity-0 group-hover:opacity-100 transition">Click →</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => { setUsername('thabo'); setPassword('agent123'); }}
-                className="w-full flex items-center justify-between p-2.5 bg-white hover:bg-green-50 rounded-lg border border-green-200 hover:border-green-300 transition-all group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-xs">💼</span>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-gray-700">Agent</p>
-                    <p className="text-[10px] text-gray-500 font-mono">thabo / agent123</p>
-                  </div>
-                </div>
-                <span className="text-[10px] text-green-600 opacity-0 group-hover:opacity-100 transition">Click →</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => { setUsername('mpho'); setPassword('super123'); }}
-                className="w-full flex items-center justify-between p-2.5 bg-white hover:bg-orange-50 rounded-lg border border-orange-200 hover:border-orange-300 transition-all group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-xs">🎯</span>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-gray-700">Supervisor</p>
-                    <p className="text-[10px] text-gray-500 font-mono">mpho / super123</p>
-                  </div>
-                </div>
-                <span className="text-[10px] text-orange-600 opacity-0 group-hover:opacity-100 transition">Click →</span>
-              </button>
-            </div>
-          </div>
+
         </div>
 
         {/* Footer */}
