@@ -1,4 +1,24 @@
-import { AppState, User, Transaction, Wallet, Reconciliation, Alert, CommissionRate, Shift, Provider, TransactionType, Role } from './types';
+import { AppState, User, Transaction, Wallet, Reconciliation, Alert, CommissionRate, Shift, Provider, TransactionType, Role, Theme, ThemeMode } from './types';
+
+export const THEME_PRESETS = [
+  { id: 'default', name: 'MobiCash Green', primaryColor: '#10b981', accentColor: '#059669', mode: 'light' as ThemeMode, description: 'Default MobiCash brand', preview: 'from-green-500 to-emerald-600' },
+  { id: 'corporate-blue', name: 'Corporate Blue', primaryColor: '#3b82f6', accentColor: '#1d4ed8', mode: 'light' as ThemeMode, description: 'Professional banking look', preview: 'from-blue-500 to-blue-700' },
+  { id: 'modern-purple', name: 'Modern Purple', primaryColor: '#8b5cf6', accentColor: '#6d28d9', mode: 'light' as ThemeMode, description: 'Contemporary fintech', preview: 'from-purple-500 to-purple-700' },
+  { id: 'sunset-orange', name: 'Sunset Orange', primaryColor: '#f97316', accentColor: '#c2410c', mode: 'light' as ThemeMode, description: 'Warm and energetic', preview: 'from-orange-500 to-red-600' },
+  { id: 'royal-teal', name: 'Royal Teal', primaryColor: '#14b8a6', accentColor: '#0f766e', mode: 'light' as ThemeMode, description: 'Elegant and calm', preview: 'from-teal-500 to-teal-700' },
+  { id: 'dark-default', name: 'Dark Mode', primaryColor: '#10b981', accentColor: '#059669', mode: 'dark' as ThemeMode, description: 'Easy on the eyes', preview: 'from-gray-800 to-gray-900' },
+  { id: 'dark-blue', name: 'Dark Corporate', primaryColor: '#3b82f6', accentColor: '#1d4ed8', mode: 'dark' as ThemeMode, description: 'Dark with blue accents', preview: 'from-blue-900 to-gray-900' },
+];
+
+const defaultTheme: Theme = {
+  mode: 'light',
+  primaryColor: '#10b981',
+  accentColor: '#059669',
+  presetId: 'default',
+  customLogo: null,
+  logoType: 'default',
+  borderRadius: 'xl',
+};
 
 const STORAGE_KEY = 'mobile_money_agent_banking';
 
@@ -60,6 +80,7 @@ const defaultState: AppState = {
   openingCash: 10000,
   shifts: [],
   activeShiftId: null,
+  theme: defaultTheme,
 };
 
 function loadState(): AppState {
@@ -68,7 +89,9 @@ function loadState(): AppState {
     if (stored) {
       const parsed = JSON.parse(stored);
       // Ensure currentUser is null on fresh load (security)
-      return { ...parsed, currentUser: null, activeShiftId: null };
+      // Ensure theme exists (migration for older state)
+      const theme = parsed.theme || defaultTheme;
+      return { ...parsed, currentUser: null, activeShiftId: null, theme };
     }
   } catch (e) {
     console.error('Failed to load state', e);
@@ -386,4 +409,49 @@ export function getActiveShift(): Shift | null {
 
 export function getUserShifts(userId: string): Shift[] {
   return state.shifts.filter(s => s.userId === userId);
+}
+
+// ============ THEME MANAGEMENT ============
+export function updateTheme(updates: Partial<Theme>) {
+  state = {
+    ...state,
+    theme: { ...state.theme, ...updates },
+  };
+  notify();
+}
+
+export function applyThemePreset(presetId: string) {
+  const preset = THEME_PRESETS.find(p => p.id === presetId);
+  if (!preset) return;
+  state = {
+    ...state,
+    theme: {
+      ...state.theme,
+      presetId,
+      primaryColor: preset.primaryColor,
+      accentColor: preset.accentColor,
+      mode: preset.mode,
+    },
+  };
+  notify();
+}
+
+export function setCustomLogo(dataUrl: string | null) {
+  state = {
+    ...state,
+    theme: {
+      ...state.theme,
+      customLogo: dataUrl,
+      logoType: dataUrl ? 'custom' : 'default',
+    },
+  };
+  notify();
+}
+
+export function resetTheme() {
+  state = {
+    ...state,
+    theme: defaultTheme,
+  };
+  notify();
 }

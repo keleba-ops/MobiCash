@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useStore, useToast } from './hooks';
 import {
   addTransaction, addReconciliation, markAlertRead, updateWallet,
   updateCommissionRate, setOpeningCash, getCurrentCash, getTotalFloat,
   getCommissionByPeriod, getCommissionByProvider, getTodayTransactions,
   resetState, logout, addUser, updateUser, toggleUserActive, deleteUser,
-  getActiveShift, getUserShifts
+  getActiveShift, getUserShifts, updateTheme, applyThemePreset, setCustomLogo, resetTheme
 } from './store';
 import { formatCurrency, formatDate, formatDateTime, generateRef, getWalletStatus, getStatusColor, getStatusBg } from './utils/format';
 import { Provider, TransactionType, Role, User } from './types';
@@ -14,6 +14,8 @@ import {
 } from 'recharts';
 import LoginPage from './LoginPage';
 import VergeDynamicsLogo from './components/VergeDynamicsLogo';
+import DynamicLogo from './components/DynamicLogo';
+import { THEME_PRESETS } from './store';
 
 type Page = 'dashboard' | 'transactions' | 'float' | 'reports' | 'settings' | 'users' | 'shifts';
 type ModalType = 'deposit' | 'withdrawal' | null;
@@ -73,7 +75,7 @@ export default function App() {
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-xl flex items-center justify-center shadow-md p-1">
-              <VergeDynamicsLogo className="w-full h-full" />
+              <DynamicLogo className="w-full h-full" />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-gray-800 truncate">MobiCash Agent</h1>
@@ -147,6 +149,9 @@ export default function App() {
                 Verge Dynamics
               </span>
             </p>
+            <p className="text-[9px] text-gray-400 mt-1">
+              Powered by <DynamicLogo className="w-3 h-3 inline-block" />
+            </p>
           </div>
         </div>
       </aside>
@@ -159,7 +164,7 @@ export default function App() {
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-xl flex items-center justify-center p-1">
-                  <VergeDynamicsLogo className="w-full h-full" />
+                  <DynamicLogo className="w-full h-full" />
                 </div>
                 <div>
                   <h1 className="text-base font-bold text-gray-800">MobiCash Agent</h1>
@@ -222,7 +227,7 @@ export default function App() {
               </button>
               <div className="lg:hidden flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-lg flex items-center justify-center p-0.5">
-                  <VergeDynamicsLogo className="w-full h-full" />
+                  <DynamicLogo className="w-full h-full" />
                 </div>
                 <h1 className="text-base font-bold text-gray-800">MobiCash</h1>
               </div>
@@ -1305,6 +1310,216 @@ function getShiftDuration(startTime: string, endTime?: string | null): string {
 }
 
 // ============ SETTINGS ============
+function ThemeManagementSection({ showToast }: { showToast: (msg: string, type?: 'success' | 'error' | 'info') => void }) {
+  const state = useStore();
+  const { theme } = state;
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      showToast('Please upload an image file', 'error');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Image must be less than 2MB', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setCustomLogo(dataUrl);
+      showToast('Logo updated successfully');
+    };
+    reader.onerror = () => showToast('Failed to read file', 'error');
+    reader.readAsDataURL(file);
+  };
+
+  const handleResetLogo = () => {
+    setCustomLogo(null);
+    showToast('Logo reset to default');
+  };
+
+  return (
+    <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-gray-100">
+      <h3 className="font-semibold text-gray-700 text-lg mb-4">🎨 Theme Management</h3>
+
+      {/* Theme Presets */}
+      <div className="mb-6">
+        <p className="text-sm font-medium text-gray-600 mb-3">Theme Presets</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {THEME_PRESETS.map(preset => (
+            <button
+              key={preset.id}
+              onClick={() => { applyThemePreset(preset.id); showToast(`Applied ${preset.name} theme`); }}
+              className={`relative p-3 rounded-xl border-2 transition-all ${
+                theme.presetId === preset.id
+                  ? 'border-blue-500 shadow-md'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className={`w-full h-12 rounded-lg bg-gradient-to-r ${preset.preview} mb-2`}></div>
+              <p className="text-xs font-medium text-gray-700 text-left">{preset.name}</p>
+              <p className="text-[10px] text-gray-500 text-left">{preset.description}</p>
+              {theme.presetId === preset.id && (
+                <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Custom Colors */}
+      <div className="mb-6">
+        <p className="text-sm font-medium text-gray-600 mb-3">Custom Colors</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Primary Color</label>
+            <div className="flex gap-2">
+              <input
+                type="color"
+                value={theme.primaryColor}
+                onChange={e => updateTheme({ primaryColor: e.target.value, presetId: 'custom' })}
+                className="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer"
+              />
+              <input
+                type="text"
+                value={theme.primaryColor}
+                onChange={e => updateTheme({ primaryColor: e.target.value, presetId: 'custom' })}
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Accent Color</label>
+            <div className="flex gap-2">
+              <input
+                type="color"
+                value={theme.accentColor}
+                onChange={e => updateTheme({ accentColor: e.target.value, presetId: 'custom' })}
+                className="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer"
+              />
+              <input
+                type="text"
+                value={theme.accentColor}
+                onChange={e => updateTheme({ accentColor: e.target.value, presetId: 'custom' })}
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-mono"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Theme Mode */}
+      <div className="mb-6">
+        <p className="text-sm font-medium text-gray-600 mb-3">Theme Mode</p>
+        <div className="flex gap-2">
+          {(['light', 'dark', 'system'] as const).map(mode => (
+            <button
+              key={mode}
+              onClick={() => updateTheme({ mode, presetId: 'custom' })}
+              className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                theme.mode === mode
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {mode === 'light' ? '☀️ Light' : mode === 'dark' ? '🌙 Dark' : '💻 System'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Border Radius */}
+      <div className="mb-6">
+        <p className="text-sm font-medium text-gray-600 mb-3">Border Radius</p>
+        <div className="flex gap-2">
+          {([
+            { id: 'sm' as const, label: 'Sharp', preview: 'rounded-sm' },
+            { id: 'md' as const, label: 'Medium', preview: 'rounded-md' },
+            { id: 'lg' as const, label: 'Large', preview: 'rounded-lg' },
+            { id: 'xl' as const, label: 'Extra Large', preview: 'rounded-xl' },
+          ]).map(option => (
+            <button
+              key={option.id}
+              onClick={() => updateTheme({ borderRadius: option.id })}
+              className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                theme.borderRadius === option.id
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <div className={`w-6 h-6 bg-current mx-auto mb-1 ${option.preview}`}></div>
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Logo Management */}
+      <div>
+        <p className="text-sm font-medium text-gray-600 mb-3">System Logo</p>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex-shrink-0">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-2xl flex items-center justify-center p-2 border-2 border-gray-200">
+              <DynamicLogo className="w-full h-full" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-2">
+            <p className="text-xs text-gray-500">
+              Current: {theme.logoType === 'custom' ? 'Custom Logo' : 'Default Verge Dynamics Logo'}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition"
+              >
+                📤 Upload Logo
+              </button>
+              {theme.logoType === 'custom' && (
+                <button
+                  onClick={handleResetLogo}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition"
+                >
+                  🔄 Reset to Default
+                </button>
+              )}
+            </div>
+            <p className="text-[10px] text-gray-400">
+              Recommended: Square image, PNG or JPG, max 2MB
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Reset Theme */}
+      <div className="mt-6 pt-6 border-t border-gray-100">
+        <button
+          onClick={() => { resetTheme(); showToast('Theme reset to default'); }}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+        >
+          🔄 Reset Theme to Default
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function SettingsPage({ showToast }: { showToast: (msg: string, type?: 'success' | 'error' | 'info') => void }) {
   const state = useStore();
   const user = state.currentUser!;
@@ -1348,6 +1563,9 @@ function SettingsPage({ showToast }: { showToast: (msg: string, type?: 'success'
           <button onClick={handleSetCash} className="px-6 py-2.5 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700 transition">Update</button>
         </div>
       </div>
+
+      {/* Theme Management */}
+      <ThemeManagementSection showToast={showToast} />
 
       {/* Commission Rates (Admin) */}
       {user.role === 'admin' && (

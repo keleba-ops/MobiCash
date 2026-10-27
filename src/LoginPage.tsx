@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { login } from './store';
 import VergeDynamicsLogo from './components/VergeDynamicsLogo';
+import DynamicLogo from './components/DynamicLogo';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -48,7 +49,7 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
         {/* Logo & Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-3xl shadow-2xl mb-4 p-3">
-            <VergeDynamicsLogo className="w-full h-full" />
+            <DynamicLogo className="w-full h-full" />
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2">MobiCash Agent</h1>
           <p className="text-green-100 text-sm md:text-base">Mobile Money Banking System</p>

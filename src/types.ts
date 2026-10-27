@@ -94,6 +94,28 @@ export interface Alert {
   read: boolean;
 }
 
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface ThemePreset {
+  id: string;
+  name: string;
+  primaryColor: string;
+  accentColor: string;
+  mode: ThemeMode;
+  description: string;
+  preview: string; // gradient preview
+}
+
+export interface Theme {
+  mode: ThemeMode;
+  primaryColor: string;
+  accentColor: string;
+  presetId: string;
+  customLogo: string | null; // base64 data URL
+  logoType: 'default' | 'custom';
+  borderRadius: 'sm' | 'md' | 'lg' | 'xl';
+}
+
 export interface AppState {
   currentUser: User | null;
   users: User[];
@@ -106,4 +128,5 @@ export interface AppState {
   openingCash: number;
   shifts: Shift[];
   activeShiftId: string | null;
+  theme: Theme;
 }
