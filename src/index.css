@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/* CSS Variables for theming */
+:root {
+  --color-primary: #10b981;
+  --color-accent: #059669;
+  --border-radius: 1rem;
+}
+
+/* Dark mode base styles */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+html.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+html.dark .bg-gray-100 {
+  background-color: #374151 !important;
+}
+
+html.dark .text-gray-800 {
+  color: #f9fafb !important;
+}
+
+html.dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+html.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+html.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+html.dark .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+html.dark .border-gray-100 {
+  border-color: #374151 !important;
+}
+
+html.dark .border-gray-200 {
+  border-color: #4b5563 !important;
+}
+
+html.dark .border {
+  border-color: #374151 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+html.dark input::placeholder,
+html.dark select::placeholder,
+html.dark textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-in {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-right {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-slide-right {
+  animation: slide-right 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Smooth transitions */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f9fafb;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Input focus styles */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+/* Table styles */
+table {
+  border-collapse: collapse;
+}
+
+/* Responsive utilities */
+@media (max-width: 1023px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none;
+  }
+}
