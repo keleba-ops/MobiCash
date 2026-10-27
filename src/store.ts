@@ -1,16 +1,31 @@
-import { AppState, User, Transaction, Wallet, Reconciliation, Alert, CommissionRate, Provider, TransactionType } from './types';
+import { AppState, User, Transaction, Wallet, Reconciliation, Alert, CommissionRate, Shift, Provider, TransactionType, Role } from './types';
 
 const STORAGE_KEY = 'mobile_money_agent_banking';
 
+const now = new Date().toISOString();
+
 const defaultUsers: User[] = [
-  { id: 'u1', name: 'Agent Thabo', role: 'agent', branchId: 'b1' },
-  { id: 'u2', name: 'Admin Kelebogile', role: 'admin', branchId: 'b1' },
-  { id: 'u3', name: 'Supervisor Mpho', role: 'supervisor', branchId: 'b1' },
+  {
+    id: 'u1', name: 'Thabo Molefe', username: 'thabo', password: 'agent123',
+    role: 'agent', branchId: 'b1', phone: '+267 71 234 567', email: 'thabo@mobcash.co.bw',
+    createdAt: now, active: true,
+  },
+  {
+    id: 'u2', name: 'Kelebogile Setlhare', username: 'admin', password: 'admin123',
+    role: 'admin', branchId: 'b1', phone: '+267 72 345 678', email: 'admin@mobcash.co.bw',
+    createdAt: now, active: true,
+  },
+  {
+    id: 'u3', name: 'Mpho Kgosana', username: 'mpho', password: 'super123',
+    role: 'supervisor', branchId: 'b1', phone: '+267 73 456 789', email: 'mpho@mobcash.co.bw',
+    createdAt: now, active: true,
+  },
 ];
 
 const defaultBranches = [
   { id: 'b1', name: 'Main Branch - Gaborone', location: 'Gaborone' },
   { id: 'b2', name: 'Francistown Branch', location: 'Francistown' },
+  { id: 'b3', name: 'Maun Branch', location: 'Maun' },
 ];
 
 const defaultWallets: Wallet[] = [
@@ -34,7 +49,7 @@ const defaultCommissionRates: CommissionRate[] = [
 ];
 
 const defaultState: AppState = {
-  currentUser: defaultUsers[0],
+  currentUser: null,
   users: defaultUsers,
   branches: defaultBranches,
   wallets: defaultWallets,
@@ -43,13 +58,17 @@ const defaultState: AppState = {
   reconciliations: [],
   alerts: [],
   openingCash: 10000,
+  shifts: [],
+  activeShiftId: null,
 };
 
 function loadState(): AppState {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure currentUser is null on fresh load (security)
+      return { ...parsed, currentUser: null, activeShiftId: null };
     }
   } catch (e) {
     console.error('Failed to load state', e);
@@ -80,11 +99,109 @@ export function getState(): AppState {
   return state;
 }
 
-export function setCurrentUser(user: User) {
-  state = { ...state, currentUser: user };
+// ============ AUTH ============
+export function login(username: string, password: string): { success: boolean; message: string } {
+  const user = state.users.find(
+    u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+  );
+  if (!user) return { success: false, message: 'Invalid username or password' };
+  if (!user.active) return { success: false, message: 'Account is deactivated. Contact admin.' };
+
+  // Start a new shift
+  const shiftId = 'sh_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+  const newShift: Shift = {
+    id: shiftId,
+    userId: user.id,
+    userName: user.name,
+    startTime: new Date().toISOString(),
+    endTime: null,
+    status: 'active',
+    openingCash: state.openingCash,
+    closingCash: null,
+    transactionsCount: 0,
+    totalDeposits: 0,
+    totalWithdrawals: 0,
+    totalCommission: 0,
+  };
+
+  state = {
+    ...state,
+    currentUser: user,
+    shifts: [newShift, ...state.shifts],
+    activeShiftId: shiftId,
+  };
+  notify();
+  return { success: true, message: 'Login successful' };
+}
+
+export function logout(closingCash?: number) {
+  if (!state.currentUser || !state.activeShiftId) return;
+
+  const todayTx = getTodayTransactions();
+  const deposits = todayTx.filter(t => t.type === 'deposit').reduce((s, t) => s + t.amount, 0);
+  const withdrawals = todayTx.filter(t => t.type === 'withdrawal').reduce((s, t) => s + t.amount, 0);
+  const commission = todayTx.reduce((s, t) => s + t.commission, 0);
+
+  state = {
+    ...state,
+    currentUser: null,
+    activeShiftId: null,
+    shifts: state.shifts.map(s =>
+      s.id === state.activeShiftId
+        ? {
+            ...s,
+            endTime: new Date().toISOString(),
+            status: 'ended' as const,
+            closingCash: closingCash ?? getCurrentCash(),
+            transactionsCount: todayTx.length,
+            totalDeposits: deposits,
+            totalWithdrawals: withdrawals,
+            totalCommission: commission,
+          }
+        : s
+    ),
+  };
   notify();
 }
 
+// ============ USER MANAGEMENT ============
+export function addUser(user: Omit<User, 'id' | 'createdAt' | 'active'>): User {
+  const newUser: User = {
+    ...user,
+    id: 'u_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    createdAt: new Date().toISOString(),
+    active: true,
+  };
+  state = { ...state, users: [...state.users, newUser] };
+  notify();
+  return newUser;
+}
+
+export function updateUser(id: string, updates: Partial<User>) {
+  state = {
+    ...state,
+    users: state.users.map(u => u.id === id ? { ...u, ...updates } : u),
+  };
+  notify();
+}
+
+export function toggleUserActive(id: string) {
+  state = {
+    ...state,
+    users: state.users.map(u => u.id === id ? { ...u, active: !u.active } : u),
+  };
+  notify();
+}
+
+export function deleteUser(id: string) {
+  state = {
+    ...state,
+    users: state.users.filter(u => u.id !== id),
+  };
+  notify();
+}
+
+// ============ TRANSACTIONS ============
 export function addTransaction(tx: Omit<Transaction, 'id' | 'createdAt' | 'commission'>): Transaction {
   const rate = state.commissionRates.find(
     r => r.provider === tx.provider && r.transactionType === tx.type
@@ -95,6 +212,7 @@ export function addTransaction(tx: Omit<Transaction, 'id' | 'createdAt' | 'commi
     ...tx,
     id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
     commission,
+    shiftId: state.activeShiftId,
     createdAt: new Date().toISOString(),
   };
 
@@ -113,7 +231,6 @@ export function addTransaction(tx: Omit<Transaction, 'id' | 'createdAt' | 'commi
   });
   state = { ...state, wallets };
 
-  // Check alerts
   checkAlerts(tx);
   notify();
   return newTx;
@@ -122,7 +239,6 @@ export function addTransaction(tx: Omit<Transaction, 'id' | 'createdAt' | 'commi
 function checkAlerts(tx: { type: TransactionType; amount: number; provider: Provider }) {
   const newAlerts: Alert[] = [];
 
-  // High transaction alert
   if (tx.amount > 15000) {
     newAlerts.push({
       id: 'a_' + Date.now(),
@@ -134,7 +250,6 @@ function checkAlerts(tx: { type: TransactionType; amount: number; provider: Prov
     });
   }
 
-  // Low float alert
   state.wallets.forEach(w => {
     if (w.currentFloat < w.minThreshold) {
       newAlerts.push({
@@ -218,11 +333,11 @@ export function setOpeningCash(amount: number) {
 }
 
 export function resetState() {
-  state = defaultState;
+  state = { ...defaultState, currentUser: null, activeShiftId: null };
   notify();
 }
 
-// Computed helpers
+// ============ COMPUTED HELPERS ============
 export function getTodayTransactions(): Transaction[] {
   const today = new Date().toISOString().split('T')[0];
   return state.transactions.filter(t => t.createdAt.startsWith(today));
@@ -262,4 +377,13 @@ export function getCommissionByProvider(): { provider: Provider; commission: num
     provider: p,
     commission: state.transactions.filter(t => t.provider === p).reduce((s, t) => s + t.commission, 0),
   }));
+}
+
+export function getActiveShift(): Shift | null {
+  if (!state.activeShiftId) return null;
+  return state.shifts.find(s => s.id === state.activeShiftId) || null;
+}
+
+export function getUserShifts(userId: string): Shift[] {
+  return state.shifts.filter(s => s.userId === userId);
 }

@@ -4,12 +4,34 @@ export type TransactionType = 'deposit' | 'withdrawal';
 export type AlertType = 'low_float' | 'high_transaction' | 'variance';
 export type AlertSeverity = 'info' | 'warning' | 'critical';
 export type TransactionStatus = 'completed' | 'pending' | 'failed';
+export type ShiftStatus = 'active' | 'ended';
 
 export interface User {
   id: string;
   name: string;
+  username: string;
+  password: string;
   role: Role;
   branchId: string;
+  phone?: string;
+  email?: string;
+  createdAt: string;
+  active: boolean;
+}
+
+export interface Shift {
+  id: string;
+  userId: string;
+  userName: string;
+  startTime: string;
+  endTime: string | null;
+  status: ShiftStatus;
+  openingCash: number;
+  closingCash: number | null;
+  transactionsCount: number;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  totalCommission: number;
 }
 
 export interface Branch {
@@ -38,6 +60,7 @@ export interface Transaction {
   agentName: string;
   reference: string;
   status: TransactionStatus;
+  shiftId: string | null;
   createdAt: string;
 }
 
@@ -45,7 +68,7 @@ export interface CommissionRate {
   id: string;
   provider: Provider;
   transactionType: TransactionType;
-  rate: number; // percentage
+  rate: number;
 }
 
 export interface Reconciliation {
@@ -72,7 +95,7 @@ export interface Alert {
 }
 
 export interface AppState {
-  currentUser: User;
+  currentUser: User | null;
   users: User[];
   branches: Branch[];
   wallets: Wallet[];
@@ -81,4 +104,6 @@ export interface AppState {
   reconciliations: Reconciliation[];
   alerts: Alert[];
   openingCash: number;
+  shifts: Shift[];
+  activeShiftId: string | null;
 }
