@@ -13,6 +13,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, AreaChart, Area
 } from 'recharts';
 import LoginPage from './LoginPage';
+import VergeDynamicsLogo from './components/VergeDynamicsLogo';
 
 type Page = 'dashboard' | 'transactions' | 'float' | 'reports' | 'settings' | 'users' | 'shifts';
 type ModalType = 'deposit' | 'withdrawal' | null;
@@ -71,8 +72,8 @@ export default function App() {
       <aside className="hidden lg:flex lg:flex-col lg:w-64 xl:w-72 bg-white border-r border-gray-200 fixed h-full z-30">
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
-              M
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-xl flex items-center justify-center shadow-md p-1">
+              <VergeDynamicsLogo className="w-full h-full" />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-gray-800 truncate">MobiCash Agent</h1>
@@ -139,12 +140,10 @@ export default function App() {
             </button>
           </div>
           <div className="mt-3 pt-3 border-t border-gray-100 text-center">
-            <p className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+            <p className="text-[10px] text-gray-400 flex items-center justify-center gap-1.5">
               <span>Built by</span>
-              <span className="inline-flex items-center gap-1 font-semibold text-gray-600">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <span className="inline-flex items-center gap-1.5 font-semibold text-gray-600">
+                <VergeDynamicsLogo className="w-3.5 h-3.5" />
                 Verge Dynamics
               </span>
             </p>
@@ -159,7 +158,9 @@ export default function App() {
           <aside className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl animate-slide-right flex flex-col">
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center text-white font-bold text-lg">M</div>
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-xl flex items-center justify-center p-1">
+                  <VergeDynamicsLogo className="w-full h-full" />
+                </div>
                 <div>
                   <h1 className="text-base font-bold text-gray-800">MobiCash Agent</h1>
                   <p className="text-xs text-gray-500">Banking System</p>
@@ -196,12 +197,10 @@ export default function App() {
                 </div>
                 <button onClick={() => { setShowLogoutModal(true); setSidebarOpen(false); }} className="p-2 text-gray-400 hover:text-red-500">🚪</button>
               </div>
-              <p className="text-[10px] text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
+              <p className="text-[10px] text-gray-400 text-center mt-2 flex items-center justify-center gap-1.5">
                 <span>Built by</span>
-                <span className="inline-flex items-center gap-1 font-semibold text-gray-600">
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                <span className="inline-flex items-center gap-1.5 font-semibold text-gray-600">
+                  <VergeDynamicsLogo className="w-3.5 h-3.5" />
                   Verge Dynamics
                 </span>
               </p>
@@ -222,7 +221,9 @@ export default function App() {
                 </svg>
               </button>
               <div className="lg:hidden flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-700 rounded-lg flex items-center justify-center text-white font-bold text-sm">M</div>
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 rounded-lg flex items-center justify-center p-0.5">
+                  <VergeDynamicsLogo className="w-full h-full" />
+                </div>
                 <h1 className="text-base font-bold text-gray-800">MobiCash</h1>
               </div>
               <h2 className="hidden lg:block text-xl font-bold text-gray-800 capitalize">
@@ -1394,12 +1395,8 @@ function SettingsPage({ showToast }: { showToast: (msg: string, type?: 'success'
       <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-              <svg className="w-9 h-9 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                <path d="M2 17l10 5 10-5"/>
-                <path d="M2 12l10 5 10-5"/>
-              </svg>
+            <div className="w-20 h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center shadow-xl p-2 border border-white/20">
+              <VergeDynamicsLogo className="w-full h-full" />
             </div>
           </div>
           <div className="flex-1">

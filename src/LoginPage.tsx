@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { login } from './store';
+import VergeDynamicsLogo from './components/VergeDynamicsLogo';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -46,10 +47,8 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
       <div className="w-full max-w-md relative z-10">
         {/* Logo & Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl shadow-2xl mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-inner">
-              M
-            </div>
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-3xl shadow-2xl mb-4 p-3">
+            <VergeDynamicsLogo className="w-full h-full" />
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2">MobiCash Agent</h1>
           <p className="text-green-100 text-sm md:text-base">Mobile Money Banking System</p>
@@ -151,10 +150,8 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
           </p>
           <p className="text-green-100/80 text-[11px] flex items-center justify-center gap-1.5">
             <span>Built by</span>
-            <span className="inline-flex items-center gap-1 font-semibold text-white">
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <span className="inline-flex items-center gap-1.5 font-semibold text-white">
+              <VergeDynamicsLogo className="w-3.5 h-3.5" />
               Verge Dynamics
             </span>
           </p>
