@@ -124,24 +124,7 @@ export default function LoginPage({ onLogin, showToast }: LoginPageProps) {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Demo Credentials</p>
-            <div className="space-y-1.5 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Admin:</span>
-                <code className="text-gray-700 font-mono">admin / admin123</code>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Agent:</span>
-                <code className="text-gray-700 font-mono">thabo / agent123</code>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Supervisor:</span>
-                <code className="text-gray-700 font-mono">mpho / super123</code>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Footer */}
