@@ -30,7 +30,7 @@ export default function App() {
       <header className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-3 sticky top-0 z-40 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold">MoMo Agent</h1>
+            <h1 className="text-lg font-bold">MobiCash Agent</h1>
             <p className="text-xs text-green-100">{state.currentUser.name} • {state.currentUser.role}</p>
           </div>
           <div className="flex items-center gap-2">
